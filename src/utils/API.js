@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASEURL = "http://dummy.restapiexample.com/api/v1/employees";
+const BASEURL = "https://dummy.restapiexample.com/api/v1/employees";
 
 // Export an object with a "search" method that searches the API for the passed query
 export default {
