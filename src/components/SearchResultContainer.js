@@ -3,37 +3,30 @@ import SearchForm from "./SearchForm";
 import EmployeeCard from "./EmployeeCard";
 import API from "../utils/API";
 import "../styles/Result.css";
-const MaxResults = 20;
 
 class SearchResultContainer extends Component {
   state = {
     result: [],
     filter: "",
-    filterBy: "lastName",
+    filterBy: "Name",
     currentSort: "default",
     sortField: ""
-
   };
 
-  // When this component mounts, search the Giphy API for pictures of kittens
-  // onsafe_componentWillMount()
+  // When this component mounts, search the API for employees data
+
   componentDidMount() {
     API.search()
       .then(res => {
         console.log(res)
         this.setState({
-          result: res.data.results.map((e, i) => ({
-            firstName: e.name.first,
-            lastName: e.name.last,
-            picture: e.picture.large,
-            email: e.email,
-            phone: e.phone,
-            dob: e.age,
-            key: i
-          }))
-
+            result: res.data.data.map((e, i) => ({
+              employee_name: e.employee_name,
+              employee_salary: e.employee_salary,
+              employee_age: e.employee_age,
+              key: i
+            }))
         })
-     
       })
       .catch(err => console.log(err));
   }
@@ -42,21 +35,13 @@ class SearchResultContainer extends Component {
     console.log("***in Filter*******");
     console.log(searchkey);
     console.log(this.state.result);
-    // this.state.result = this.state.result.filter(this.state.result => this.state.result.includes(searchkey));
-    var filterResult = this.state.result.filter(person => person.firstName === searchkey)
-
+    const filterResult = this.state.result.filter(person => person.employee_name === searchkey)
     this.setState({
       result:filterResult
-      
     })
-
-   
-    // console.log("FILTERD RESULT------")
-    // console.log(filterResult);
   }
 
-
-  // When the form is submitted, search the Giphy API for `this.state.search`
+  // When the form is submitted, search the API for `this.state.search`
   handleFormSubmit = event => {
     event.preventDefault();
     const value = event.target.value;
@@ -64,16 +49,14 @@ class SearchResultContainer extends Component {
     console.log("**********");
     console.log(value);
     console.log(name);
+
     //filter function here
     this.filterEmployees(value);
     this.setState({
-
       [name]: value
-
     });
     this.filterEmployees(value);
     this.filterEmployees(this.state.search);
-
   };
 
   // testFunction = () => {
@@ -106,10 +89,18 @@ class SearchResultContainer extends Component {
         
   };
 
+  handleSortByName = event => {
+    event.preventDefault();
+    console.log(event);
+    console.log("*****Sort by Name*****");
+    const sortResult = (this.state.result).sort((a,b) => (a.employee_name > b.employee_name) ? 1 : -1)
+    this.setState({
+      result:sortResult 
+    })
+ }
+
   render() {
 
-    // const{ data } = this.state.result;
-    //  const{ currentSort } = this.state;
     return (
       <div className="container">
         <div className="row">
@@ -121,57 +112,33 @@ class SearchResultContainer extends Component {
           <div className="col-md-6">
             <SearchForm
               value={this.state.search}
-               handleInputChange={this.handleInputChange}
-               handleFormSubmit={this.handleFormSubmit}
+              handleInputChange={this.handleInputChange}
+              handleFormSubmit={this.handleFormSubmit}
             />
           </div>
         </div>
 
         <div className="row">
-          {/* <div > */}
           <table className="table">
-            <tr>
-              <th scope="col">Photo</th>
-              <th>First Name</th>
-              {/* <th onClick={this.onSortChange}>First Name   */}
-              {/* <button onClick={this.onSortChange}> ^
-								</button> */}
-              {/* </th> */}
-              <th scope="col">Last Name </th>
-              <th scope="col">Email</th>
-              <th scope="col">Phone</th>
-            </tr>
-
-            {/* { [...this.state.result].sort(this.sortTypes[this.state.currentSort].fn).map((item) =>  */}
-            {/* {this.state.result.length > 0 ? (
-                <div>
-                  {this.state.result.map(item => (
-                    <EmployeeCard
-                      picture={item.picture}
-                      firstName={item.firstName}
-                      lastName={item.lastName}
-                      email={item.email}
-                      phone={item.phone}
-                      key={item.key}
-                    />
-                  ))}
-                </div>
-              ) : (<div />)} */}
+            <thead>
+              <tr>
+                <th >Name <button onClick={this.handleSortByName} className="btn btn-primary mt-3">Sort by</button></th>
+                <th scope="col">Salary</th>
+                <th scope="col">Age</th>
+              </tr>
+            </thead>
+            <tbody>
             {[...this.state.result].map((item) =>
               <EmployeeCard
-                picture={item.picture}
-                firstName={item.firstName}
-                lastName={item.lastName}
-                email={item.email}
-                phone={item.phone}
+                name={item.employee_name}
+                salary={item.employee_salary}
+                age={item.employee_age}                
                 key={item.key}
               />
             )}
-
+            </tbody>
           </table>
         </div>
-
-
       </div>
     );
   }
