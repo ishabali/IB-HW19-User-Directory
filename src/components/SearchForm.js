@@ -1,6 +1,7 @@
 import React from "react";
 
 function SearchForm(props) {
+  // console.log(props)
   return (
     <form>
       <div className="form-group">
@@ -9,7 +10,6 @@ function SearchForm(props) {
             <div className="row">
               <input
                 onChange={props.handleInputChange}
-                value={props.search}
                 name="search"
                 type="text"
                 className="form-control"

@@ -4,6 +4,7 @@ import EmployeeCard from "./EmployeeCard";
 import API from "../utils/API";
 import "../styles/Result.css";
 import FilterByAge from "./FilterByAge";
+
 class ResultContainer extends Component {
   state = {
     result: [],
@@ -12,8 +13,10 @@ class ResultContainer extends Component {
     currentSort: "default",
     sortField: ""
   };
-  // When this component mounts, search the API for employees data
+
   allEmpl = []
+  
+  // When this component mounts, search the API for employees data
   componentDidMount() {
     API.search()
       .then(res => {
@@ -30,7 +33,8 @@ class ResultContainer extends Component {
         })
       .catch(err => console.log(err));
   }
-  filterEmployees = (searchkey) => {
+
+  searchEmployee = (searchkey) => {
     console.log("***in Filter*******");
     console.log(searchkey);
     console.log(this.state.result);
@@ -47,32 +51,20 @@ class ResultContainer extends Component {
         })
     }
   }
+
+  handleAgeForm = event => {
+    event.preventDefault();
+    let nam = event.target.name;
+    let val = event.target.value;
+    this.setState({[nam]: val})
+  };
+
   // When the form is submitted, search the API for `this.state.search`
   handleFormSubmit = event => {
     event.preventDefault();
-    const value = event.target.value;
-    const name = event.target.name;
-    console.log("**********");
-    console.log(value);
-    console.log(name);
-    //filter function here
-    this.filterEmployees(value);
-    this.setState({
-      [name]: value
-    });
-    this.filterEmployees(value);
-    this.filterEmployees(this.state.search);
+    this.searchEmployee(this.state.search);
   };
-  // testFunction = () => {
-  //   { console.log("************") }
-  //   { console.log(this.state.result[0].picture) }
-  //   { console.log("+++++++++++++") }
-  // }
-  // filtertestfunction = () => {
-  //   const words = ['spray', 'limit', 'elite', 'exuberant', 'destruction', 'present'];
-  //   const result2 = words.filter(word => word.includes("it"));
-  //   console.log(result2);
-  // }
+
   handleInputChange = event => {
     event.preventDefault();
     console.log(event);
@@ -81,13 +73,11 @@ class ResultContainer extends Component {
     console.log("**********");
     console.log(value);
     console.log(name);
-    //filter function be called here
-    // this.filterEmployees(value);
-    // this.filterEmployees(this.state.search);
     this.setState({
       [name]: value
     });
   };
+
   handleSortByName = event => {
     event.preventDefault();
     console.log(event);
@@ -98,7 +88,47 @@ class ResultContainer extends Component {
       result:sortResult 
     })
   }
+
+  handleAgeFormSubmit = event => {
+    event.preventDefault();
+    this.getListByAge ();
+  };
+
+  getListByAge = () => {
+        console.log("**********");
+        console.log(this.state.minAge);
+        console.log(this.state.maxAge);
+        const employees = this.allEmpl;
+        const minAge = this.state.minAge;
+        const maxAge = this.state.maxAge;
+        console.log("getPrposFunc2",employees)
+        let ageArray = [];
+        if (!minAge || !maxAge){
+          console.log("no age range")
+          this.setState({
+            result:employees
+          })
+          console.log("this.state.result",this.state.result)
+        } else {
+          for (const employee of employees) {
+              if (employee.employee_age >= minAge && employee.employee_age <= maxAge) {
+                  ageArray.push(employee)
+              }
+          }
+        }
+        console.log(ageArray)
+       
+        // let ageArray =  employees.filter(function(employee) {
+        //     return employee.employee_age >= minAge && employee.employee_age <= maxAge;
+        // });
+        this.setState({
+            result: ageArray 
+          })
+        console.log(this.state)
+  }
+
   render() {
+
     return (
       <div className="container">
         <div className="row">
@@ -109,17 +139,18 @@ class ResultContainer extends Component {
         <div className="row">
           <div className="col-md-6">
             <SearchForm
-              value={this.state.search}
               handleInputChange={this.handleInputChange}
               handleFormSubmit={this.handleFormSubmit}
             />
           </div>
           <div className="col-md-6">
             <FilterByAge
-              array1={this.state.result}
+              handleAgeForm={this.handleAgeForm}
+              getListByAge={this.handleAgeFormSubmit}
             />
           </div>
         </div>
+
         <div className="row">
           <table className="table">
             <thead>
@@ -145,4 +176,5 @@ class ResultContainer extends Component {
     );
   }
 }
+
 export default ResultContainer;
