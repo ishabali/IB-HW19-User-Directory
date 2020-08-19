@@ -4,7 +4,6 @@ import EmployeeCard from "./EmployeeCard";
 import API from "../utils/API";
 import "../styles/Result.css";
 import FilterByAge from "./FilterByAge";
-
 class ResultContainer extends Component {
   state = {
     result: [],
@@ -13,9 +12,8 @@ class ResultContainer extends Component {
     currentSort: "default",
     sortField: ""
   };
-
   // When this component mounts, search the API for employees data
-
+  allEmpl = []
   componentDidMount() {
     API.search()
       .then(res => {
@@ -27,21 +25,28 @@ class ResultContainer extends Component {
               employee_age: e.employee_age,
               key: i
             }))
+          })
+          this.allEmpl = this.state.result;
         })
-      })
       .catch(err => console.log(err));
   }
-
   filterEmployees = (searchkey) => {
     console.log("***in Filter*******");
     console.log(searchkey);
     console.log(this.state.result);
-    const filterResult = this.state.result.filter(person => person.employee_name === searchkey)
-    this.setState({
-      result:filterResult
-    })
+    console.log("filter", this.allEmpl)
+      if (!searchkey){
+        this.setState({
+          result:this.allEmpl
+        })
+      } else {
+        const filterResult = this.allEmpl.filter(person => person.employee_name === searchkey)
+        console.log("filterResult",filterResult);
+        this.setState({
+          result:filterResult
+        })
+    }
   }
-
   // When the form is submitted, search the API for `this.state.search`
   handleFormSubmit = event => {
     event.preventDefault();
@@ -50,7 +55,6 @@ class ResultContainer extends Component {
     console.log("**********");
     console.log(value);
     console.log(name);
-
     //filter function here
     this.filterEmployees(value);
     this.setState({
@@ -59,7 +63,6 @@ class ResultContainer extends Component {
     this.filterEmployees(value);
     this.filterEmployees(this.state.search);
   };
-
   // testFunction = () => {
   //   { console.log("************") }
   //   { console.log(this.state.result[0].picture) }
@@ -70,7 +73,6 @@ class ResultContainer extends Component {
   //   const result2 = words.filter(word => word.includes("it"));
   //   console.log(result2);
   // }
-
   handleInputChange = event => {
     event.preventDefault();
     console.log(event);
@@ -86,7 +88,6 @@ class ResultContainer extends Component {
       [name]: value
     });
   };
-
   handleSortByName = event => {
     event.preventDefault();
     console.log(event);
@@ -97,9 +98,7 @@ class ResultContainer extends Component {
       result:sortResult 
     })
   }
-
   render() {
-
     return (
       <div className="container">
         <div className="row">
@@ -118,11 +117,9 @@ class ResultContainer extends Component {
           <div className="col-md-6">
             <FilterByAge
               array1={this.state.result}
-
             />
           </div>
         </div>
-
         <div className="row">
           <table className="table">
             <thead>
@@ -148,5 +145,4 @@ class ResultContainer extends Component {
     );
   }
 }
-
 export default ResultContainer;
