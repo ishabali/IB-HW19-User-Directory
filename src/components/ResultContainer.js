@@ -3,8 +3,9 @@ import SearchForm from "./SearchForm";
 import EmployeeCard from "./EmployeeCard";
 import API from "../utils/API";
 import "../styles/Result.css";
+import FilterByAge from "./FilterByAge";
 
-class SearchResultContainer extends Component {
+class ResultContainer extends Component {
   state = {
     result: [],
     filter: "",
@@ -82,11 +83,8 @@ class SearchResultContainer extends Component {
     // this.filterEmployees(value);
     // this.filterEmployees(this.state.search);
     this.setState({
-
       [name]: value
-
     });
-        
   };
 
   handleSortByName = event => {
@@ -94,10 +92,11 @@ class SearchResultContainer extends Component {
     console.log(event);
     console.log("*****Sort by Name*****");
     const sortResult = (this.state.result).sort((a,b) => (a.employee_name > b.employee_name) ? 1 : -1)
+    console.log("sortResult",sortResult)
     this.setState({
       result:sortResult 
     })
- }
+  }
 
   render() {
 
@@ -116,13 +115,19 @@ class SearchResultContainer extends Component {
               handleFormSubmit={this.handleFormSubmit}
             />
           </div>
+          <div className="col-md-6">
+            <FilterByAge
+              array1={this.state.result}
+
+            />
+          </div>
         </div>
 
         <div className="row">
           <table className="table">
             <thead>
               <tr>
-                <th >Name <button onClick={this.handleSortByName} className="btn btn-primary mt-3">Sort by</button></th>
+                <th >Name <button onClick={this.handleSortByName} className="btn btn-primary mt-3">Sort A to Z</button></th>
                 <th scope="col">Salary</th>
                 <th scope="col">Age</th>
               </tr>
@@ -144,4 +149,4 @@ class SearchResultContainer extends Component {
   }
 }
 
-export default SearchResultContainer;
+export default ResultContainer;
